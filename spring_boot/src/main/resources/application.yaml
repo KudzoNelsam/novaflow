@@ -1,3 +1,15 @@
 spring:
   application:
     name: spring_boot
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/novaflow
+    password: novaflow
+    username: novaflow
+  jpa:
+    hibernate:
+      ddl-auto: create
+
+server:
+  servlet:
+    context-path: /api
