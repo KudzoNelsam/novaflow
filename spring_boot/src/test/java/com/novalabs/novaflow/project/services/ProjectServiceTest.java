@@ -2,6 +2,7 @@ package com.novalabs.novaflow.project.services;
 
 import com.novalabs.novaflow.project.dto.request.ProjectRequest;
 import com.novalabs.novaflow.project.entity.Project;
+import com.novalabs.novaflow.project.exceptions.ProjectAlreadyExistException;
 import com.novalabs.novaflow.project.mapper.ProjectMapper;
 import com.novalabs.novaflow.project.repository.ProjectRepository;
 import com.novalabs.novaflow.project.services.impl.ProjectServiceImpl;
@@ -10,6 +11,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,18 +36,43 @@ class ProjectServiceTest {
     private ProjectServiceImpl service;
 
     @Test
+    void create_shouldThrowWhenNameAlreadyExists() {
+        // given
+        ProjectRequest request = new ProjectRequest("NovaFlow", "Backend Spring Boot");
+
+        Project mappedProject = Project.builder()
+                .name("NovaFlow")
+                .description("Backend Spring Boot")
+                .build();
+
+        // il faut stuber le mapper AUSSI, même dans ce scénario,
+        // car le service semble l'appeler avant (ou pendant) le contrôle de doublon
+        when(mapper.toEntity(request)).thenReturn(mappedProject);
+        when(repository.existsByName("NovaFlow")).thenReturn(true);
+
+        // when / then
+        assertThatThrownBy(() -> service.create(request))
+                .isInstanceOf(ProjectAlreadyExistException.class);
+
+        verify(repository, never()).save(any());
+    }
+
+    @Test
     void create() {
         // given
         ProjectRequest request = new ProjectRequest("NovaFlow", "Backend Spring Boot");
 
-        Project entityToSave = new Project();
-        entityToSave.setName("NovaFlow");
-        entityToSave.setDescription("Backend Spring Boot");
+        Project entityToSave = Project.builder()
+                .name("NovaFlow")
+                .description("Backend Spring Boot")
+                .build();
 
-        Project saved = new Project();
-        saved.setName("NovaFlow");
-        saved.setDescription("Backend Spring Boot");
+        Project saved = Project.builder()
+                .name("NovaFlow")
+                .description("Backend Spring Boot")
+                .build();
 
+        when(repository.existsByName("NovaFlow")).thenReturn(false);
         when(mapper.toEntity(request)).thenReturn(entityToSave);
         when(repository.save(entityToSave)).thenReturn(saved);
 
@@ -51,19 +82,24 @@ class ProjectServiceTest {
         // then
         assertThat(result.getName()).isEqualTo("NovaFlow");
         assertThat(result.getDescription()).isEqualTo("Backend Spring Boot");
+
+        verify(repository).existsByName("NovaFlow");
+        verify(mapper).toEntity(request);
+        verify(repository).save(entityToSave);
     }
 
     @Test
     void getAll() {
         // given
-        Project p1 = new Project();
-        p1.setName("NovaFlow");
-        p1.setDescription("Description1");
+        Project p1 = Project.builder()
+                .name("NovaFlow")
+                .description("Backend Spring Boot")
+                .build();
 
-        Project p2 = new Project();
-        p2.setName("NovaStream");
-        p2.setDescription("Description2");
-
+        Project p2 = Project.builder()
+                .name("NovaStream")
+                .description("Backend Spring Boot Reactive")
+                .build();
 
         when(repository.findAll()).thenReturn(List.of(p1, p2));
 
@@ -79,9 +115,10 @@ class ProjectServiceTest {
     @Test
     void findByName() {
         // given
-        Project project = new Project();
-        project.setName("NovaFlow");
-        project.setDescription("Backend Spring Boot");
+        Project project =Project.builder()
+                .name("NovaFlow")
+                .description("Backend Spring Boot")
+                .build();
 
         when(repository.findByName("NovaFlow")).thenReturn(Optional.of(project));
 

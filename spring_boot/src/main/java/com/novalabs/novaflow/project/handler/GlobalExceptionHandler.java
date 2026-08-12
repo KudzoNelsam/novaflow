@@ -1,7 +1,7 @@
 package com.novalabs.novaflow.project.handler;
 
 
-import com.novalabs.novaflow.project.exceptions.ProjectAlreadyExist;
+import com.novalabs.novaflow.project.exceptions.ProjectAlreadyExistException;
 import com.novalabs.novaflow.rest.dto.ErrorFieldResponse;
 import com.novalabs.novaflow.rest.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -17,8 +17,8 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     // Gère une exception spécifique
-    @ExceptionHandler(ProjectAlreadyExist.class)
-    public ResponseEntity<ErrorResponse> handleNotFound(ProjectAlreadyExist ex) {
+    @ExceptionHandler(ProjectAlreadyExistException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(ProjectAlreadyExistException ex) {
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.CONFLICT.value(),
                 ex.getMessage()
