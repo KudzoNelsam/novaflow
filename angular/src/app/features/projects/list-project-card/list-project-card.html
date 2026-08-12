@@ -1,0 +1,5 @@
+<div class="w-3/4 m-auto p-2 grid grid-cols-3 gap-4">
+  @for (project of projects(); track project.id) {
+    <app-project-card [project]="project" />
+  }
+</div>
