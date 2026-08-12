@@ -1,6 +1,6 @@
 package com.novalabs.novaflow.project.services.impl;
 
-import com.novalabs.novaflow.project.dto.request.ProjectRequestDto;
+import com.novalabs.novaflow.project.dto.request.ProjectRequest;
 import com.novalabs.novaflow.project.entity.Project;
 import com.novalabs.novaflow.project.exceptions.ProjectAlreadyExist;
 import com.novalabs.novaflow.project.mapper.ProjectMapper;
@@ -21,8 +21,8 @@ public class ProjectServiceImpl implements ProjectService {
 
 
     @Override
-    public Project create(ProjectRequestDto projectRequestDto) {
-        Project project = mapper.toEntity(projectRequestDto);
+    public Project create(ProjectRequest projectRequest) {
+        Project project = mapper.toEntity(projectRequest);
 
         if (isExistByName(project.getName())) {
             throw new ProjectAlreadyExist(project.getName());
@@ -36,7 +36,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Optional<Project> getByName(String name) {
+    public Optional<Project> findByName(String name) {
         return repository.findByName(name);
     }
 

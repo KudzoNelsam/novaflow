@@ -1,9 +1,9 @@
 package com.novalabs.novaflow.project.controller.impl;
 
 import com.novalabs.novaflow.project.controller.ProjectController;
-import com.novalabs.novaflow.project.dto.request.ProjectRequestDto;
-import com.novalabs.novaflow.project.dto.response.ListProjectResponseDto;
-import com.novalabs.novaflow.project.dto.response.ProjectResponseDto;
+import com.novalabs.novaflow.project.dto.request.ProjectRequest;
+import com.novalabs.novaflow.project.dto.response.ListProjectResponse;
+import com.novalabs.novaflow.project.dto.response.ProjectResponse;
 import com.novalabs.novaflow.project.entity.Project;
 import com.novalabs.novaflow.project.mapper.ProjectMapper;
 import com.novalabs.novaflow.project.services.ProjectService;
@@ -20,15 +20,15 @@ public class ProjectControllerImpl implements ProjectController {
 
 
     @Override
-    public ResponseEntity<ProjectResponseDto> createProject(ProjectRequestDto requestDto) {
+    public ResponseEntity<ProjectResponse> createProject(ProjectRequest requestDto) {
         Project project = service.create(requestDto);
-        ProjectResponseDto created = mapper.toDto(project);
+        ProjectResponse created = mapper.toDto(project);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<ListProjectResponseDto> getAllProject() {
-        ListProjectResponseDto responses = new ListProjectResponseDto(service.getAll().stream().map((mapper::toDto)).toList());
+    public ResponseEntity<ListProjectResponse> getAllProject() {
+        ListProjectResponse responses = new ListProjectResponse(service.getAll().stream().map((mapper::toDto)).toList());
         return ResponseEntity.ok(responses);
     }
 }

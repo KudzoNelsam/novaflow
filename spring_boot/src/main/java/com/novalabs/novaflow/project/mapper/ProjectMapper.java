@@ -1,18 +1,18 @@
 package com.novalabs.novaflow.project.mapper;
 
-import com.novalabs.novaflow.project.dto.request.ProjectRequestDto;
-import com.novalabs.novaflow.project.dto.response.ProjectResponseDto;
+import com.novalabs.novaflow.project.dto.request.ProjectRequest;
+import com.novalabs.novaflow.project.dto.response.ProjectResponse;
 import com.novalabs.novaflow.project.entity.Project;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ProjectMapper {
 
-    public ProjectResponseDto toDto(Project entity) {
-        return new ProjectResponseDto(entity.getId(), entity.getName(), entity.getDescription());
+    public ProjectResponse toDto(Project entity) {
+        return new ProjectResponse(entity.getId(), entity.getName(), entity.getDescription());
     }
 
-    public Project toEntity(ProjectRequestDto requestDto){
+    public Project toEntity(ProjectRequest requestDto){
         return Project.builder()
                 .name(requestDto.name())
                 .description(requestDto.description())

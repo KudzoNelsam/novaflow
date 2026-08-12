@@ -1,6 +1,6 @@
 package com.novalabs.novaflow.project.dto.response;
 
-public record ProjectResponseDto(
+public record ProjectResponse(
         Long id,
         String name,
         String description
