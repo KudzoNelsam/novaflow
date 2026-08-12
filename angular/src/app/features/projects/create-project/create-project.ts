@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, output, signal } from '@angular/core';
 import { ButtonDirective } from 'primeng/button';
 import { Project } from '../project-model';
 import { form, FormField, minLength, required, submit } from '@angular/forms/signals';
@@ -15,6 +15,9 @@ import { firstValueFrom } from 'rxjs';
 export class CreateProject {
   projectService = inject(ProjectService);
   private messageService = inject(MessageService);
+
+  // Annonceur
+  projectCreated = output<Project>();
 
   // Define form state as a plain writable signal
   projectModel = signal<Project>({
@@ -36,7 +39,11 @@ export class CreateProject {
 
     await submit(this.projectForm, async (form) => {
       try {
-        await firstValueFrom(this.projectService.createProject(form().value()));
+        const createdProject = await firstValueFrom(
+          this.projectService.createProject(form().value()),
+        );
+
+        this.projectCreated.emit(createdProject);
 
         this.messageService.add({
           severity: 'success',
@@ -44,7 +51,11 @@ export class CreateProject {
           detail: 'Le projet a été créé avec succès.',
         });
 
-        // reset du formulaire après succès, si souhaité
+        this.projectModel.set({
+          name: '',
+          description: '',
+        });
+        
         this.submitted.set(false);
       } catch (error) {
         this.messageService.add({
