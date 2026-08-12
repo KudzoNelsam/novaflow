@@ -1,0 +1,31 @@
+<form class="p-2 flex gap-2 items-start" (submit)="createProject($event)">
+  <div class="flex flex-col w-64">
+    <label class="floating-label">
+      <input type="text" placeholder="Nom du projet" class="input input-md w-full"
+             [formField]="projectForm.name"
+      />
+      <span>Nom du projet</span>
+    </label>
+    <small class="text-error text-xs min-h-4 mt-1">
+      @if (projectForm.name().invalid() && submitted()) {
+        {{ projectForm.name().errors()[0]?.message }}
+      }
+    </small>
+  </div>
+
+  <div class="flex flex-col w-full">
+    <label class="floating-label w-full">
+      <input type="text" placeholder="Description" class="input input-md w-full"
+             [formField]="projectForm.description"
+      />
+      <span>Description du projet</span>
+    </label>
+    <small class="text-error text-xs min-h-4 mt-1">
+      @if (projectForm.description().invalid() && submitted()) {
+        {{ projectForm.description().errors()[0]?.message }}
+      }
+    </small>
+  </div>
+
+  <button pButton severity="contrast" class="self-start">Save</button>
+</form>
